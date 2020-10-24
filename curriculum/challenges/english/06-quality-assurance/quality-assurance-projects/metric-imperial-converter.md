@@ -100,13 +100,53 @@ tests:
     }
     "
   - text: If my number is invalid, returned with will 'invalid number'.
-    testString: ''
+    testString: "async getUserInput => {
+      try {
+        const data = await $.get(getUserInput('url') + '/api/convert?input=1and1L');
+        assert(data.initUnit === 'invalid number' || data === 'invalid number');
+      } catch(xhr) {
+        throw new Error(xhr.responseText);
+      }
+    }
   - text: If both are invalid, return will be 'invalid number and unit'.
-    testString: ''
+    testString: "async getUserInput => {
+      try {
+        const data = await $.get(getUserInput('url') + '/api/convert?input=1and1mile');
+        assert(data.initUnit === 'invalid number and unit' || data === 'invalid number and unit');
+      } catch(xhr) {
+        throw new Error(xhr.responseText);
+      }
+    }
   - text: I can use fractions, decimals or both in my parameter(ie. 5, 1/2, 2.5/6), but if nothing is provided it will default to 1.
-    testString: ''
+    testString: "async getUserInput => {
+      try {
+        const data1 = await $.get(getUserInput('url') + '/api/convert?input=mi');
+        assert.equal(data1.returnNum, 1.60934);
+        assert.equal(data1.returnUnit, 'km');
+        const data2 = await $.get(getUserInput('url') + '/api/convert?input=km');
+        assert.equal(data2.returnNum, 0.62137);
+        assert.equal(data2.returnUnit, 'mi');
+      } catch(xhr) {
+        throw new Error(xhr.responseText);
+      }
+    }
   - text: My return will consist of the initNum, initUnit, returnNum, returnUnit, and string spelling out units in format '{initNum} {initial_Units} converts to {returnNum} {return_Units}' with the result rounded to 5 decimals in the string.
-    testString: ''
+    testString: "async getUserInput => {
+      try {
+        const data1 = await $.get(getUserInput('url') + '/api/convert?input=1/3mi');
+        assert.equal(data1.initNum, 0.33333);
+        assert.equal(data1.initUnit, 'mi');
+        assert.equal(data1.returnNum, 0.53644);
+        assert.equal(data1.returnUnit, 'km');
+        const data2 = await $.get(getUserInput('url') + '/api/convert?input=5.4/3lbs');
+        assert.equal(data2.initNum, 1.8);
+        assert.equal(data2.initUnit, 'lbs');
+        assert.equal(data2.returnNum, 0.81647);
+        assert.equal(data2.returnUnit, 'kg');
+      } catch(xhr) {
+        throw new Error(xhr.responseText);
+      }
+    }
   - text: All 16 unit tests are complete and passing.
     testString: ''
   - text: All 5 functional tests are complete and passing.
